@@ -71,14 +71,17 @@ public class InstanceController {
     @Autowired
     private EC2Repository repo;
     @PostMapping("/create")
-    public String create(@RequestParam String name,
+    public String create(@RequestHeader("Authorization") String token,
+        @RequestParam String name,
                          @RequestParam String jarPath) {
-        return service.create(name, jarPath);
+
+  String username = JwtUtil.extractUsername(token.substring(7));
+  return service.create(username,name, jarPath);
     }
 
     @GetMapping("/all")
-    public Object all() {
-        return service.getAll();
+    public Object all(String username) {
+        return service.getUserInstances(username);
     }
 
     @PostMapping("/stop/{id}")
@@ -111,4 +114,13 @@ public String start(@PathVariable Long id) throws Exception {
 public EC2Instance getOne(@PathVariable Long id) {
 return repo.findById(id).orElseThrow();
 }
+
+@GetMapping("/my")
+public Object myInstances(@RequestHeader("Authorization") String token) {
+
+    String username = JwtUtil.extractUsername(token.substring(7));
+
+    return service.getUserInstances(username);
+}
+
 }

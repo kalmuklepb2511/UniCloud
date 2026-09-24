@@ -157,7 +157,7 @@ public class EC2Service {
     @Autowired
     private EC2Repository repo;
 
-public String create(String name, String jarPath) {
+public String create(String username,String name, String jarPath) {
 
     int port = PostManager.getNextPort();
 
@@ -177,13 +177,19 @@ public String create(String name, String jarPath) {
 
     inst.setStatus("RUNNING");
 
+    inst.setUserId(username); // 🔥 IMPORTANT
+
     repo.save(inst);
 
     return "Instance running at http://localhost:" + port;
 }
-    public Object getAll() {
+  /*   public Object getAll() {
         return repo.findAll();
-    }
+    }*/
+
+    public Object getUserInstances(String username) {
+    return repo.findByUserId(username);
+}
 
     public String stop(Long id) throws Exception {
         EC2Instance i = repo.findById(id).orElseThrow();

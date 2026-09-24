@@ -27,16 +27,10 @@ public void setStatus(String status) { this.status = status; }
 }*/
 
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 @Entity
 public class EC2Instance {
@@ -50,6 +44,7 @@ public class EC2Instance {
     private String status;
     private int port;
     private String containerName;
+    private String userId;
     //private LocalDateTime createdAt;
 
 
@@ -93,6 +88,14 @@ public class EC2Instance {
 
     public void setContainerName(String containerName) {
         this.containerName = containerName;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
 
