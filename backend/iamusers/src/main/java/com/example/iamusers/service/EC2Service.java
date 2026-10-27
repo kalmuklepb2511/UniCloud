@@ -1,0 +1,191 @@
+package com.example.iamusers.service;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.iamusers.model.EC2Instance;
+import com.example.iamusers.repository.EC2Repository;
+import com.example.iamusers.util.DockerUtil;
+
+@Service
+public class EC2Service {
+
+    @Autowired
+    private EC2Repository repo;
+
+    public String create(String username,
+            String name,
+            String image,
+            String instanceType,
+            int port) {
+
+        try {
+
+            String cpu = "0.5";
+            String memory = "512m";
+
+            if ("t2.medium".equals(instanceType)) {
+                cpu = "1.5";
+                memory = "2g";
+            }
+
+            String containerName = "vm_" + name + "_" + port;
+
+            String command = "docker run -d " +
+                    "--name " + containerName + " " +
+                    "-p " + port + ":80 " +
+                    "--cpus=" + cpu + " " +
+                    "--memory=" + memory + " " +
+                    image;
+
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String containerId = reader.readLine();
+
+            EC2Instance inst = new EC2Instance();
+            inst.setName(name);
+            inst.setImage(image);
+            inst.setInstanceType(instanceType);
+            inst.setPort(port);
+            inst.setContainerId(containerId);
+            inst.setContainerName(containerName);
+            inst.setStatus("RUNNING");
+            inst.setUserId(username);
+
+            repo.save(inst);
+
+            return "Running at http://localhost:" + port;
+
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    public Object getUserInstances(String username) {
+        return repo.findByUserIdOrderByCreatedAtDesc(username);
+    }
+
+    public String stop(Long id) throws Exception {
+        EC2Instance i = repo.findById(id).orElseThrow();
+        DockerUtil.stop(i.getContainerId());
+        i.setStatus("STOPPED");
+        repo.save(i);
+        return "Stopped";
+    }
+
+    /*
+     * public String delete(Long id) throws Exception {
+     * EC2Instance i = repo.findById(id).orElseThrow();
+     * DockerUtil.delete(i.getContainerId());
+     * repo.delete(i);
+     * return "Deleted";
+     * }
+     */
+
+    public String delete(Long id, String username, String role) throws Exception {
+
+        if (role == null) {
+            return "Role missing";
+        }
+
+        EC2Instance inst = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Instance not found"));
+
+        // ADMIN
+        if ("ROLE_ADMIN".equals(role)) {
+            DockerUtil.delete(inst.getContainerId());
+            repo.delete(inst);
+            return "Deleted by ADMIN";
+        }
+
+        // USER check
+        if (!inst.getUserId().equals(username)) {
+            return "Access Denied!";
+        }
+
+        DockerUtil.delete(inst.getContainerId());
+        repo.delete(inst);
+
+        return "Deleted";
+    }
+
+    public Object getAll(String role) {
+
+        if (!role.equals("ADMIN")) {
+            return "Access Denied!";
+        }
+
+        return repo.findAll();
+    }
+
+    public String status(Long id) throws Exception {
+        EC2Instance i = repo.findById(id).orElseThrow();
+        return DockerUtil.status(i.getContainerId());
+    }
+
+    public String logs(Long id) throws Exception {
+        EC2Instance i = repo.findById(id).orElseThrow();
+        return DockerUtil.logs(i.getContainerId());
+    }
+
+    public String start(Long id) throws Exception {
+        EC2Instance i = repo.findById(id).orElseThrow();
+
+        Runtime.getRuntime().exec("docker start " + i.getContainerId());
+
+        i.setStatus("RUNNING");
+        repo.save(i);
+
+        return "Started";
+    }
+
+    public String restart(Long id) throws Exception {
+        EC2Instance i = repo.findById(id).orElseThrow();
+
+        Runtime.getRuntime().exec("docker restart " + i.getContainerId());
+
+        i.setStatus("RUNNING");
+        repo.save(i);
+
+        return "Restarted";
+    }
+
+    public String getRealStatus(Long id) throws Exception {
+        EC2Instance i = repo.findById(id).orElseThrow();
+
+        Process p = Runtime.getRuntime().exec(
+                "docker ps -a --filter id=" + i.getContainerId() + " --format {{.Status}}");
+
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(p.getInputStream()));
+
+        return reader.readLine();
+    }
+
+    public String syncStatus(Long id) throws Exception {
+        EC2Instance i = repo.findById(id).orElseThrow();
+
+        Process p = Runtime.getRuntime().exec(
+                "docker inspect -f {{.State.Running}} " + i.getContainerId());
+
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(p.getInputStream()));
+
+        String result = reader.readLine();
+
+        if ("true".equals(result)) {
+            i.setStatus("RUNNING");
+        } else {
+            i.setStatus("STOPPED");
+        }
+
+        repo.save(i);
+
+        return i.getStatus();
+    }
+}
