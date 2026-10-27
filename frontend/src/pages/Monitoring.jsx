@@ -153,13 +153,11 @@ function Monitoring() {
 
       {/* ================= SIDEBAR ================= */}
 
-      <Sidebar />
 
       {/* ================= MAIN CONTENT ================= */}
 
       <div className="main-content">
 
-        <Navbar />
 
         <main className="page-content">
 

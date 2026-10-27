@@ -137,17 +137,14 @@ function Admin() {
   return (
     <div className="app-layout">
 
-      {/* Sidebar */}
       <Sidebar />
 
       <div className="main-content">
 
-        {/* Navbar */}
         <Navbar />
 
         <main className="page-content">
 
-          {/* Page Header */}
           <div className="page-header">
             <div>
               <h1>Admin Panel</h1>
@@ -160,7 +157,7 @@ function Admin() {
             </div>
           </div>
 
-          {/* Statistics */}
+          //Statistics
           <div className="admin-stats">
 
             {stats.map((stat) => (
@@ -183,7 +180,6 @@ function Admin() {
 
           </div>
 
-          {/* Cloud Control */}
           <div className="admin-section">
 
             <div className="section-heading">
@@ -256,7 +252,6 @@ function Admin() {
             </div>
           </div>
 
-          {/* Worker Nodes */}
           <div className="admin-section">
 
             <div className="section-heading">
@@ -348,10 +343,9 @@ function Admin() {
             </div>
           </div>
 
-          {/* Services + Activity */}
+          
           <div className="admin-bottom-grid">
 
-            {/* Services */}
             <div className="admin-section">
 
               <div className="section-heading">
@@ -406,7 +400,6 @@ function Admin() {
 
             </div>
 
-            {/* Recent Activity */}
             <div className="admin-section">
 
               <div className="section-heading">
@@ -447,7 +440,6 @@ function Admin() {
 
           </div>
 
-          {/* Admin Information */}
           <div className="admin-info">
 
             <div className="admin-info-icon">
@@ -472,3 +464,292 @@ function Admin() {
 }
 
 export default Admin;
+
+{/*import { useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
+import api from "../services/api";
+
+function Admin() {
+const [users, setUsers] = useState([]);
+const [instances, setInstances] = useState([]);
+const [deployments, setDeployments] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState("");
+
+const loadAdminData = async () => {
+setLoading(true);
+setError("");
+
+```
+try {
+  const [usersRes, instancesRes, deploymentsRes] =
+    await Promise.all([
+      api.get("/admin/users"),
+      api.get("/admin/instances"),
+      api.get("/admin/deployments"),
+    ]);
+
+  setUsers(Array.isArray(usersRes.data) ? usersRes.data : []);
+  setInstances(
+    Array.isArray(instancesRes.data) ? instancesRes.data : []
+  );
+  setDeployments(
+    Array.isArray(deploymentsRes.data)
+      ? deploymentsRes.data
+      : []
+  );
+} catch (err) {
+  console.error("Failed to load admin resources:", err);
+
+  if (err.response?.status === 401) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+    return;
+  }
+
+  setError(
+    err.response?.data?.message ||
+      err.response?.data?.error ||
+      "Could not load admin resources. Check your backend endpoints and permissions."
+  );
+} finally {
+  setLoading(false);
+}
+```
+
+};
+
+useEffect(() => {
+const storedUser = localStorage.getItem("user");
+
+```
+let user = {};
+
+try {
+  user = storedUser ? JSON.parse(storedUser) : {};
+} catch {
+  user = {};
+}
+
+if (String(user.role || "").toUpperCase() !== "ADMIN") {
+  window.location.href = "/dashboard";
+  return;
+}
+
+loadAdminData();
+```
+
+}, []);
+
+const isRunning = (status) =>
+String(status || "").toUpperCase() === "RUNNING";
+
+const getUrl = (item) =>
+item.applicationUrl ||
+item.url ||
+(item.port ? `http://localhost:${item.port}` : "");
+
+if (loading) {
+return <div className="page-content">Loading admin resources...</div>;
+}
+
+return ( <div className="page-content"> <div className="page-header"> <div> <h1>Admin Control Panel</h1> <p>View users, virtual machines, and deployed applications.</p> </div>
+
+```
+    <button
+      type="button"
+      className="btn-secondary"
+      onClick={loadAdminData}
+    >
+      <RefreshCw size={16} />
+      Refresh
+    </button>
+  </div>
+
+  {error && (
+    <div className="deployment-alert deployment-alert-error">
+      {error}
+    </div>
+  )}
+
+  <section className="stats-grid">
+    <div className="stat-card">
+      <div>
+        <div className="stat-title">Total Users</div>
+        <div className="stat-value">{users.length}</div>
+      </div>
+    </div>
+
+    <div className="stat-card">
+      <div>
+        <div className="stat-title">Total VMs</div>
+        <div className="stat-value">{instances.length}</div>
+      </div>
+    </div>
+
+    <div className="stat-card">
+      <div>
+        <div className="stat-title">Running VMs</div>
+        <div className="stat-value">
+          {instances.filter((item) => isRunning(item.status)).length}
+        </div>
+      </div>
+    </div>
+
+    <div className="stat-card">
+      <div>
+        <div className="stat-title">Deployments</div>
+        <div className="stat-value">{deployments.length}</div>
+      </div>
+    </div>
+  </section>
+
+  <section className="card">
+    <div className="card-header">
+      <h2>All Users</h2>
+    </div>
+
+    <div className="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {users.length === 0 ? (
+            <tr>
+              <td colSpan="4">No users found.</td>
+            </tr>
+          ) : (
+            users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.id}</td>
+                <td>{user.username || "-"}</td>
+                <td>{user.email || "-"}</td>
+                <td>{user.role || "-"}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section className="card">
+    <div className="card-header">
+      <h2>All Virtual Machines</h2>
+    </div>
+
+    <div className="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Container Name</th>
+            <th>Status</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {instances.length === 0 ? (
+            <tr>
+              <td colSpan="4">No VMs found.</td>
+            </tr>
+          ) : (
+            instances.map((vm) => (
+              <tr key={vm.id ?? vm.containerId}>
+                <td>
+                  {vm.username || vm.ownerUsername || vm.userId || "-"}
+                </td>
+                <td>{vm.containerName || vm.name || "-"}</td>
+                <td>{String(vm.status || "UNKNOWN").toUpperCase()}</td>
+                <td>
+                  {getUrl(vm) && isRunning(vm.status) ? (
+                    <a
+                      href={getUrl(vm)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open VM
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section className="card">
+    <div className="card-header">
+      <h2>All Deployed Applications</h2>
+    </div>
+
+    <div className="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Application Name</th>
+            <th>Source</th>
+            <th>Runtime</th>
+            <th>Status</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {deployments.length === 0 ? (
+            <tr>
+              <td colSpan="6">No deployments found.</td>
+            </tr>
+          ) : (
+            deployments.map((app) => (
+              <tr key={app.id}>
+                <td>
+                  {app.username || app.ownerUsername || app.userId || "-"}
+                </td>
+                <td>{app.name || "-"}</td>
+                <td>{app.sourceType || "-"}</td>
+                <td>{app.runtime || app.projectType || "-"}</td>
+                <td>
+                  {String(app.status || "UNKNOWN").toUpperCase()}
+                </td>
+                <td>
+                  {getUrl(app) && isRunning(app.status) ? (
+                    <a
+                      href={getUrl(app)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open Application
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+```
+
+);
+}
+
+export default Admin;*/}

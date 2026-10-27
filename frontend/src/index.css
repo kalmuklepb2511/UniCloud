@@ -25,8 +25,9 @@ a {
 }
 
 .main-content {
-  margin-left: 240px;
-  width: calc(100% - 240px);
+  margin-left: 220px;
+  width: calc(100% - 220px);
+  min-width:0;
   min-height: 100vh;
   background: #f5f7fb;
 }
@@ -34,6 +35,7 @@ a {
 .page-content {
   padding: 25px;
 }
+
 
 /* Buttons */
 
@@ -2706,4 +2708,685 @@ table small {
 
 .register-field select:focus {
   border-color: #1677ff;
+}
+
+
+/* =========================================================
+UNICLOUD DEPLOYMENT PAGE
+Append this section to the bottom of your existing CSS.
+========================================================= */
+
+/* Page layout */
+
+.page-content {
+width: 100%;
+min-width: 0;
+box-sizing: border-box;
+}
+
+.page-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+margin-bottom: 26px;
+}
+
+.page-header h1 {
+margin: 0 0 8px;
+font-size: clamp(24px, 3vw, 32px);
+line-height: 1.25;
+}
+
+.page-header p {
+margin: 0;
+color: var(--text-secondary, #64748b);
+line-height: 1.6;
+}
+
+/* Buttons */
+
+.btn-primary,
+.btn-secondary,
+.btn-start,
+.btn-stop,
+.delete-button {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+box-sizing: border-box;
+border: 1px solid transparent;
+border-radius: 8px;
+padding: 10px 15px;
+font: inherit;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+transition:
+background-color 0.2s ease,
+border-color 0.2s ease,
+transform 0.2s ease;
+}
+
+.btn-primary {
+color: #fff;
+background: var(--accent, #2563eb);
+}
+
+.btn-primary:hover:not(:disabled) {
+filter: brightness(0.94);
+}
+
+.btn-secondary {
+color: var(--text-h, #334155);
+background: var(--card-bg, #fff);
+border-color: var(--border, #cbd5e1);
+}
+
+.btn-secondary:hover:not(:disabled) {
+background: var(--accent-bg, #eff6ff);
+}
+
+.btn-start {
+color: #166534;
+background: #dcfce7;
+border-color: #bbf7d0;
+}
+
+.btn-start:hover:not(:disabled) {
+background: #bbf7d0;
+}
+
+.btn-stop {
+color: #92400e;
+background: #fef3c7;
+border-color: #fde68a;
+}
+
+.btn-stop:hover:not(:disabled) {
+background: #fde68a;
+}
+
+.delete-button {
+color: #b91c1c;
+background: #fee2e2;
+border-color: #fecaca;
+}
+
+.delete-button:hover:not(:disabled) {
+background: #fecaca;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-start:disabled,
+.btn-stop:disabled,
+.delete-button:disabled {
+opacity: 0.55;
+cursor: not-allowed;
+}
+
+/* General cards */
+
+.card {
+box-sizing: border-box;
+background: var(--card-bg, #fff);
+border: 1px solid var(--border, #e2e8f0);
+border-radius: 12px;
+box-shadow: 0 2px 8px rgb(15 23 42 / 4%);
+}
+
+.deployment-form {
+padding: 24px;
+margin-bottom: 26px;
+}
+
+.card-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 16px;
+margin-bottom: 24px;
+}
+
+.card-header h2 {
+display: flex;
+align-items: center;
+gap: 10px;
+margin: 0 0 8px;
+font-size: 20px;
+}
+
+.card-header p {
+margin: 0;
+color: var(--text-secondary, #64748b);
+line-height: 1.6;
+}
+
+/* Form grid */
+
+.form-grid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 22px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 8px;
+min-width: 0;
+}
+
+.form-group label {
+font-size: 14px;
+font-weight: 600;
+color: var(--text-h, #1e293b);
+}
+
+.form-group input,
+.form-group select {
+width: 100%;
+min-width: 0;
+box-sizing: border-box;
+padding: 11px 12px;
+color: var(--text, #0f172a);
+background: var(--card-bg, #fff);
+border: 1px solid var(--border, #cbd5e1);
+border-radius: 8px;
+font: inherit;
+font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+outline: 2px solid var(--accent, #2563eb);
+outline-offset: 1px;
+}
+
+.form-group input[type="file"] {
+padding: 10px;
+}
+
+.form-group small {
+color: var(--text-secondary, #64748b);
+font-size: 12px;
+line-height: 1.6;
+}
+
+.full-width {
+grid-column: 1 / -1;
+}
+
+/* Deployment target options */
+
+.deployment-target-section {
+margin-top: 30px;
+padding-top: 24px;
+border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.deployment-target-section h3 {
+margin: 0 0 18px;
+font-size: 17px;
+}
+
+.target-option {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+padding: 17px;
+margin-bottom: 12px;
+border: 1px solid var(--border, #cbd5e1);
+border-radius: 9px;
+cursor: pointer;
+transition:
+border-color 0.2s ease,
+background-color 0.2s ease;
+}
+
+.target-option:hover {
+border-color: var(--accent, #2563eb);
+}
+
+.target-option:has(input:checked) {
+border-color: var(--accent, #2563eb);
+background: var(--accent-bg, #eff6ff);
+}
+
+.target-option input {
+flex-shrink: 0;
+margin: 4px 0 0;
+accent-color: var(--accent, #2563eb);
+}
+
+.target-option span {
+display: flex;
+flex-direction: column;
+gap: 6px;
+min-width: 0;
+}
+
+.target-option strong {
+font-size: 14px;
+}
+
+.target-option small {
+color: var(--text-secondary, #64748b);
+font-size: 13px;
+line-height: 1.6;
+}
+
+.existing-instance-select {
+max-width: 620px;
+margin: 22px 0 0 28px;
+}
+
+.select-with-refresh {
+display: flex;
+align-items: stretch;
+gap: 10px;
+}
+
+.select-with-refresh select {
+flex: 1;
+min-width: 0;
+}
+
+.select-with-refresh button {
+flex-shrink: 0;
+}
+
+.deployment-submit-row {
+display: flex;
+justify-content: flex-end;
+margin-top: 26px;
+}
+
+/* Alerts */
+
+.deployment-alert {
+padding: 14px 16px;
+margin-bottom: 18px;
+border-radius: 8px;
+font-size: 14px;
+line-height: 1.6;
+overflow-wrap: anywhere;
+}
+
+.deployment-alert-error {
+color: #991b1b;
+background: #fef2f2;
+border: 1px solid #fecaca;
+}
+
+.deployment-alert-success {
+color: #166534;
+background: #f0fdf4;
+border: 1px solid #bbf7d0;
+}
+
+/* Statistics */
+
+.stats-grid,
+.vm-stats {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 18px;
+margin-bottom: 26px;
+}
+
+.stat-card,
+.vm-stat {
+display: flex;
+align-items: center;
+gap: 16px;
+min-width: 0;
+padding: 22px;
+}
+
+.stat-icon {
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+width: 48px;
+height: 48px;
+color: var(--accent, #2563eb);
+background: var(--accent-bg, #eff6ff);
+border-radius: 10px;
+}
+
+.stat-title {
+margin-bottom: 6px;
+color: var(--text-secondary, #64748b);
+font-size: 13px;
+}
+
+.stat-value {
+font-size: 27px;
+font-weight: 700;
+line-height: 1.2;
+}
+
+/* Deployment information section */
+
+.paas-info {
+margin-top: 26px;
+padding: 24px;
+}
+
+.paas-info h2 {
+margin: 0 0 22px;
+font-size: 20px;
+}
+
+.info-grid {
+display: grid;
+grid-template-columns: repeat(2, minmax(0, 1fr));
+gap: 22px;
+}
+
+.info-grid > div {
+padding: 18px;
+background: var(--accent-bg, #f8fafc);
+border: 1px solid var(--border, #e2e8f0);
+border-radius: 9px;
+}
+
+.info-grid strong {
+display: block;
+margin-bottom: 8px;
+font-size: 14px;
+}
+
+.info-grid p {
+margin: 0;
+color: var(--text-secondary, #64748b);
+font-size: 13px;
+line-height: 1.7;
+}
+
+/* Tables */
+
+.table-container {
+width: 100%;
+overflow-x: auto;
+border-radius: 10px;
+}
+
+.table-container table {
+width: 100%;
+min-width: 760px;
+border-collapse: collapse;
+text-align: left;
+}
+
+.table-container th,
+.table-container td {
+padding: 14px 16px;
+border-bottom: 1px solid var(--border, #e2e8f0);
+vertical-align: middle;
+font-size: 13px;
+}
+
+.table-container th {
+color: var(--text-secondary, #64748b);
+background: var(--accent-bg, #f8fafc);
+font-size: 12px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.035em;
+white-space: nowrap;
+}
+
+.table-container tbody tr:last-child td {
+border-bottom: none;
+}
+
+.table-container tbody tr:hover {
+background: var(--accent-bg, #f8fafc);
+}
+
+.table-container td strong {
+font-weight: 600;
+}
+
+.table-container td a {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+color: var(--accent, #2563eb);
+text-decoration: none;
+white-space: nowrap;
+}
+
+.table-container td a:hover {
+text-decoration: underline;
+}
+
+.deployment-id {
+display: block;
+margin-top: 5px;
+color: var(--text-secondary, #64748b);
+font-size: 11px;
+}
+
+.action-buttons {
+display: flex;
+align-items: center;
+flex-wrap: wrap;
+gap: 7px;
+}
+
+.action-buttons button {
+padding: 7px 10px;
+font-size: 12px;
+white-space: nowrap;
+}
+
+/* Deployment status labels */
+
+.deployment-status,
+.status {
+display: inline-block;
+padding: 5px 10px;
+border-radius: 20px;
+font-size: 11px;
+font-weight: 700;
+line-height: 1.4;
+white-space: nowrap;
+}
+
+.status-running {
+color: #166534;
+background: #dcfce7;
+}
+
+.status-stopped {
+color: #475569;
+background: #e2e8f0;
+}
+
+.status-failed {
+color: #991b1b;
+background: #fee2e2;
+}
+
+.status-building,
+.status-deploying,
+.status-pending,
+.status-provisioning {
+color: #92400e;
+background: #fef3c7;
+}
+
+/* Existing VM form compatibility */
+
+.create-vm-card {
+padding: 24px;
+margin-bottom: 26px;
+}
+
+.form-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 15px;
+margin-bottom: 22px;
+}
+
+.form-header h2 {
+margin: 0;
+}
+
+.create-vm-card .form-grid {
+margin-bottom: 24px;
+}
+
+.create-vm-card .form-grid > div {
+display: flex;
+flex-direction: column;
+gap: 8px;
+min-width: 0;
+}
+
+.create-vm-card label {
+font-size: 14px;
+font-weight: 600;
+}
+
+.create-vm-card input,
+.create-vm-card select {
+width: 100%;
+box-sizing: border-box;
+padding: 11px 12px;
+border: 1px solid var(--border, #cbd5e1);
+border-radius: 8px;
+background: var(--card-bg, #fff);
+color: var(--text, #0f172a);
+font: inherit;
+}
+
+.create-vm-card small {
+color: var(--text-secondary, #64748b);
+line-height: 1.6;
+}
+
+/* Responsive layout */
+
+@media (max-width: 900px) {
+.stats-grid,
+.vm-stats {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stats-grid > :last-child,
+.vm-stats > :last-child {
+grid-column: 1 / -1;
+}
+
+.deployment-form,
+.paas-info {
+padding: 20px;
+}
+}
+
+@media (max-width: 640px) {
+.page-header {
+align-items: flex-start;
+flex-direction: column;
+gap: 15px;
+}
+
+.page-header > button {
+width: 100%;
+}
+
+.form-grid,
+.info-grid,
+.stats-grid,
+.vm-stats {
+grid-template-columns: 1fr;
+}
+
+.stats-grid > :last-child,
+.vm-stats > :last-child {
+grid-column: auto;
+}
+
+.deployment-form,
+.paas-info,
+.create-vm-card {
+padding: 16px;
+}
+
+.card-header {
+align-items: flex-start;
+flex-direction: column;
+}
+
+.full-width {
+grid-column: auto;
+}
+
+.existing-instance-select {
+margin-left: 0;
+}
+
+.deployment-submit-row {
+justify-content: stretch;
+}
+
+.deployment-submit-row button {
+width: 100%;
+}
+
+.select-with-refresh {
+align-items: stretch;
+}
+
+.stat-card,
+.vm-stat {
+padding: 17px;
+}
+
+.table-container th,
+.table-container td {
+padding: 12px;
+}
+}
+
+
+.deployment-form {
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 12px;
+  animation: deploymentFormShow 0.2s ease-in-out;
+}
+
+.deployment-form .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.deployment-form .card-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+@keyframes deploymentFormShow {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

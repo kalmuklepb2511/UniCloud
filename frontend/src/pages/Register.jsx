@@ -1,56 +1,64 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import api from "../services/api";
 function Register() {
   const navigate = useNavigate();
 
-  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [mobile, setMobile] = useState("");
   const [role, setRole] = useState("Student");
+
   const [error, setError] = useState("");
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setError("");
+  
+  
+  const handleRegister = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    if (
-      !fullName ||
-      !email ||
-      !password ||
-      !confirmPassword ||
-      !role
-    ) {
-      setError("Please fill all fields.");
-      return;
-    }
+  if (!username || !email || !password || !mobile || !role) {
+    setError("Please fill all fields.");
+    return;
+  }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
+  if (password.length < 6) {
+    setError("Password must be at least 6 characters.");
+    return;
+  }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
+ /* if (password !== confirmPassword) {
+    setError("Passwords do not match.");
+    return;
+  }*/
 
-    // Temporary frontend registration
-    localStorage.setItem(
-      "registeredUser",
-      JSON.stringify({
-        fullName,
-        email,
-        password,
-        role,
-      })
-    );
+  try {
+    // Convert frontend role → backend role
+    const backendRole = role === "Admin" ? "ADMIN" : "USER";
 
-    alert(`Account created successfully as ${role}!`);
+    const response = await api.post("/auth/register", {
+      username: username,
+      email: email,
+      password: password,
+      mobile: mobile,
+      role: backendRole,
+    });
+
+    alert(response.data); // backend returns string
 
     navigate("/login");
-  };
+
+  } catch (error) {
+    console.error(error);
+
+    const message =
+      error.response?.data ||
+      "Registration failed";
+
+    setError(message);
+  }
+};
 
   return (
     <div className="register-page">
@@ -106,13 +114,13 @@ function Register() {
 
             {/* FULL NAME */}
             <div className="register-field">
-              <label>Full Name</label>
+              <label>Username</label>
 
               <input
                 type="text"
-                placeholder="Enter your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
 
@@ -136,7 +144,7 @@ function Register() {
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
               >
-                <option value="Student">Student</option>
+                <option value="Student">User</option>
                 <option value="Admin">Admin</option>
               </select>
             </div>
@@ -155,14 +163,14 @@ function Register() {
 
             {/* CONFIRM PASSWORD */}
             <div className="register-field">
-              <label>Confirm Password</label>
+              <label>Mobile</label>
 
               <input
-                type="password"
-                placeholder="Confirm password"
-                value={confirmPassword}
+                type="text"
+                placeholder="Enter mobile no."
+                value={mobile}
                 onChange={(e) =>
-                  setConfirmPassword(e.target.value)
+                  setMobile(e.target.value)
                 }
               />
             </div>

@@ -1,32 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../services/api"; 
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 function Users() {
-  const [users, setUsers] = useState([
-    {
-      id: "usr-001",
-      name: "Vachanashree",
-      email: "vachanashree@unicloud.com",
-      role: "Admin",
-      status: "Active",
-    },
-    {
-      id: "usr-002",
-      name: "Student User",
-      email: "student@unicloud.com",
-      role: "User",
-      status: "Active",
-    },
-    {
-      id: "usr-003",
-      name: "Faculty User",
-      email: "faculty@unicloud.com",
-      role: "User",
-      status: "Inactive",
-    },
-  ]);
-
+ 
+const [users, setUsers] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
 
   const [name, setName] = useState("");
@@ -35,58 +16,125 @@ function Users() {
   const [password, setPassword] = useState("");
 
   // Create User
-  const createUser = () => {
-    if (!name || !email || !password) {
-      alert("Please fill all fields.");
-      return;
-    }
 
-    const newUser = {
-      id: `usr-${String(users.length + 1).padStart(3, "0")}`,
-      name: name,
-      email: email,
-      role: role,
-      status: "Active",
-    };
+  const createUser = async () => {
+if (!name.trim() || !email.trim() || !password) {
+alert("Please fill all required fields.");
+return;
+}
 
-    setUsers([...users, newUser]);
+try {
+await api.post("/admin/users", {
+username: name.trim(),
+email: email.trim(),
+password,
+role: role.toUpperCase(),
+});
 
-    setName("");
-    setEmail("");
-    setPassword("");
-    setRole("User");
-    setShowForm(false);
 
-    alert("User created successfully!");
-  };
+await loadUsers();
+
+setName("");
+setEmail("");
+setPassword("");
+setRole("User");
+setShowForm(false);
+
+alert("User created successfully!");
+
+} catch (err) {
+console.error("Create user failed:", err.response?.data || err.message);
+
+
+alert(
+  err.response?.data?.error ||
+  "Could not create user. Please check the backend."
+);
+
+
+}
+};
+
 
   // Activate / Deactivate
-  const toggleUser = (id) => {
-    setUsers(
-      users.map((user) =>
-        user.id === id
-          ? {
-              ...user,
-              status:
-                user.status === "Active"
-                  ? "Inactive"
-                  : "Active",
-            }
-          : user
-      )
-    );
-  };
+
+  const toggleUser = async (id) => {
+  const user = users.find((item) => item.id === id);
+
+  if (!user) return;
+
+  const newStatus = user.status === "Active" ? "INACTIVE" : "ACTIVE";
+
+  try {
+    await api.patch(`/admin/users/${id}/status`, {
+      status: newStatus,
+    });
+
+    await loadUsers();
+  } catch (err) {
+    console.error("Update status failed:", err.response?.data || err.message);
+    alert("Could not update user status.");
+  }
+};
+const loadUsers = async () => {
+try {
+setLoading(true);
+setError("");
+
+
+const response = await api.get("/admin/users");
+
+const mappedUsers = response.data.map((user) => ({
+  id: user.id,
+  name: user.username,
+  email: user.email,
+  role: user.role?.toUpperCase() === "ADMIN" ? "Admin" : "User",
+  status: user.status?.toUpperCase() === "INACTIVE"
+    ? "Inactive"
+    : "Active",
+}));
+
+setUsers(mappedUsers);
+
+
+} catch (err) {
+console.error("Failed to load users:", err.response?.data || err.message);
+setError(
+err.response?.status === 403
+? "You do not have permission to view users."
+: "Could not load users. Check your login and backend connection."
+);
+} finally {
+setLoading(false);
+}
+};
+
+useEffect(() => {
+loadUsers();
+}, []);
+
+{loading && <p>Loading users...</p>}
+
+{error && <p role="alert">{error}</p>}
+
 
   // Delete
-  const deleteUser = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
+const deleteUser = async (id) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this user?"
+  );
 
-    if (!confirmDelete) return;
+  if (!confirmed) return;
 
-    setUsers(users.filter((user) => user.id !== id));
-  };
+  try {
+    await api.delete(`/admin/users/${id}`);
+    await loadUsers();
+    alert("User deleted successfully.");
+  } catch (err) {
+    console.error("Delete user failed:", err.response?.data || err.message);
+    alert("Could not delete user.");
+  }
+};
 
   const activeUsers = users.filter(
     (user) => user.status === "Active"
@@ -103,15 +151,10 @@ function Users() {
   return (
     <div className="app-layout">
 
-      {/* Sidebar */}
-      <Sidebar />
-
       {/* Main Content */}
       <div className="main-content">
 
-        {/* Navbar */}
-        <Navbar />
-
+       
         <main className="page-content">
 
           {/* Header */}

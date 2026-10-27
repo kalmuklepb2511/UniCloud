@@ -1,54 +1,112 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+import api from "../services/api";
+
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+ 
+/*const handleLogin = async (e) => {
+  e.preventDefault();
 
-    // Check empty fields
-    if (!email || !password) {
-      alert("Please enter email and password");
+  try {
+    const res = await api.post("/auth/login", {
+      username:email,
+      password:password,
+    });
+
+    // ✅ FIX: use res.data (NOT data)
+    const userData = res.data;
+
+    if (!userData.token) {
+      alert("Login failed");
       return;
     }
 
-    // Get registered user
-    const registeredUser = JSON.parse(
-      localStorage.getItem("registeredUser")
-    );
+   
 
-    // Check if account exists
-    if (!registeredUser) {
-      alert("No account found. Please create an account first.");
-      return;
-    }
+  //  localStorage.setItem("user", JSON.stringify(userData));
+ 
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify({
+  token: res.data.token
+}));
+    if (!res || !res.data || !res.data.token) {
+  alert("Invalid response from server");
+  return;
+}
 
-    // Check email and password
-    if (
-      email !== registeredUser.email ||
-      password !== registeredUser.password
-    ) {
-      alert("Invalid email or password");
-      return;
-    }
+ // ✅ STORE TOKEN HERE
+//localStorage.setItem("user", JSON.stringify(res.data));
 
-    // Save logged-in user
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        fullName: registeredUser.fullName,
-        email: registeredUser.email,
-        role: registeredUser.role,
-      })
-    );
-
-    // Go to dashboard
     navigate("/dashboard");
-  };
+
+  } catch (err) {
+    console.log(err);
+    alert(err.response?.data || "Login failed");
+  }
+};*/
+const handleLogin = async (e) => {
+e.preventDefault();
+
+try {
+const res = await api.post("/auth/login", {
+username: email,
+password: password,
+});
+
+
+const data = res.data;
+
+if (!data?.token) {
+  alert("Login failed: token was not returned.");
+  return;
+}
+
+// Store the JWT token.
+localStorage.setItem("token", data.token);
+
+// Save the user details and role returned by your backend.
+localStorage.setItem(
+  "user",
+  JSON.stringify({
+    username: data.username,
+    email: data.email,
+    role: String(data.role || "USER").toUpperCase(),
+    token: data.token,
+  })
+);
+
+// Navigate according to the user's role.
+const role = String(data.role || "USER").toUpperCase();
+
+if (role === "ADMIN") {
+  navigate("/admin");
+} else {
+  navigate("/dashboard");
+}
+
+
+} catch (err) {
+console.error("Login failed:", err);
+
+
+alert(
+  typeof err.response?.data === "string"
+    ? err.response.data
+    : err.response?.data?.message || "Login failed."
+);
+
+
+}
+};
+
 
   return (
     <div className="login-page">

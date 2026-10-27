@@ -84,7 +84,6 @@ function Billing() {
       <div className="main-content">
 
         {/* Navbar */}
-        <Navbar />
 
         <main className="page-content">
 

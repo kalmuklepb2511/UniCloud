@@ -29,7 +29,7 @@ function Navbar() {
         </button>
 
         {/* User */}
-        <div className="user-profile">
+        {/*<div className="user-profile">
 
           <UserCircle size={34} />
 
@@ -38,7 +38,7 @@ function Navbar() {
             <span>Student</span>
           </div>
 
-        </div>
+        </div>*/}
 
         {/* Logout */}
         <button
