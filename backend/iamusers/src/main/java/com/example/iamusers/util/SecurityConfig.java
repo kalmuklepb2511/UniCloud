@@ -229,13 +229,14 @@ public class SecurityConfig {
                                                 "GET",
                                                 "POST",
                                                 "PUT",
+                                                "PATCH",
                                                 "DELETE",
                                                 "OPTIONS"));
 
                 configuration.setAllowedHeaders(
                                 List.of(
                                                 "Authorization",
-                                                "Content-Type"));
+                                                "Content-Type", "Accept", "Origin"));
 
                 configuration.setAllowCredentials(true);
 

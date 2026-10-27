@@ -40,6 +40,8 @@ public class Users {
     // private String role; // ADMIN / USER
     @Column(nullable = false)
     private String role = "USER";
+    @Column(nullable = false)
+    private String status = "ACTIVE";
 
     // getters and setters
     public Long getId() {
@@ -84,6 +86,14 @@ public class Users {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }

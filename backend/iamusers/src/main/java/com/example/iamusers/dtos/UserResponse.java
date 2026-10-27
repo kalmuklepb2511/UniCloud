@@ -17,7 +17,7 @@ public class UserResponse {
         this.email = user.getEmail();
         this.mobile = user.getMobile();
         this.role = user.getRole();
-        // this.status = user.getStatus();
+        this.status = user.getStatus();
     }
 
     public Long getId() {
@@ -40,10 +40,8 @@ public class UserResponse {
         return role;
     }
 
-    /*
-     * public String getStatus() {
-     * return status;
-     * }
-     */
+    public String getStatus() {
+        return status;
+    }
 
 }
