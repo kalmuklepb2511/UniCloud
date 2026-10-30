@@ -1,4 +1,5 @@
 package com.example.iamusers.model;
+
 /*
 import java.lang.annotation.Inherited;
 
@@ -25,14 +26,11 @@ public String getStatus() { return status; }
 public void setStatus(String status) { this.status = status; }
 
 }*/
-
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import jakarta.persistence.PrePersist;
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

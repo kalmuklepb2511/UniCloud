@@ -1,0 +1,14 @@
+gitignore
+**/target/
+**/node_modules/
+**/dist/
+**/build/
+*.class
+.env
+.env.*
+!.env.example
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
